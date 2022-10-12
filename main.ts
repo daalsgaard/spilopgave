@@ -1,10 +1,27 @@
 namespace SpriteKind {
     export const player1 = SpriteKind.create()
     export const player2 = SpriteKind.create()
+    export const Glas = SpriteKind.create()
 }
-let Burger: Sprite = null
-let maxScore = 0
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Glas, function (sprite, otherSprite) {
+    info.setScore(0)
+    otherSprite.destroy()
+})
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
+    game.over(false)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    info.changeScoreBy(1)
+    otherSprite.destroy()
+})
+let eEnemy: Sprite = null
+let dEnemy: Sprite = null
+let Glas: Sprite = null
+let Dåse: Sprite = null
+let maxScore1 = 20
+let maxScore = 70
 tiles.setCurrentTilemap(tilemap`level1`)
+info.startCountdown(30)
 let mySprite = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
@@ -23,42 +40,116 @@ let mySprite = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Player)
+let projectile = sprites.createProjectileFromSprite(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . 3 3 3 3 3 . . . . . . 
+    . . . . . 3 3 3 3 3 . . . . . . 
+    . . . . . 3 3 3 3 3 . . . . . . 
+    . . . . . 3 3 3 3 3 . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, mySprite, 50, 50)
+tiles.placeOnRandomTile(mySprite, sprites.castle.tileGrass2)
 controller.moveSprite(mySprite, 100, 100)
 scene.cameraFollowSprite(mySprite)
 for (let index = 0; index < maxScore; index++) {
-    Burger = sprites.create(img`
-        ...........ccccc66666...........
-        ........ccc4444444444666........
-        ......cc444444444bb4444466......
-        .....cb4444bb4444b5b444444b.....
-        ....eb4444b5b44444b44444444b....
-        ...ebb44444b4444444444b444446...
-        ..eb6bb444444444bb444b5b444446..
-        ..e6bb5b44444444b5b444b44bb44e..
-        .e66b4b4444444444b4444444b5b44e.
-        .e6bb444444444444444444444bb44e.
-        eb66b44444bb444444444444444444be
-        eb66bb444b5b44444444bb44444444be
-        fb666b444bb444444444b5b4444444bf
-        fcb666b44444444444444bb444444bcf
-        .fbb6666b44444444444444444444bf.
-        .efbb66666bb4444444444444444bfe.
-        .86fcbb66666bbb44444444444bcc688
-        8772effcbbbbbbbbbbbbbbbbcfc22778
-        87722222cccccccccccccccc22226678
-        f866622222222222222222222276686f
-        fef866677766667777776667777fffef
-        fbff877768f86777777666776fffffbf
-        fbeffeefffeff7766688effeeeefeb6f
-        f6bfffeffeeeeeeeeeeeeefeeeeebb6e
-        f66ddfffffeeeffeffeeeeeffeedb46e
-        .c66ddd4effffffeeeeeffff4ddb46e.
-        .fc6b4dddddddddddddddddddb444ee.
-        ..ff6bb444444444444444444444ee..
-        ....ffbbbb4444444444444444ee....
-        ......ffebbbbbb44444444eee......
-        .........fffffffcccccee.........
-        ................................
+    Dåse = sprites.create(img`
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....ffffffffffff....
+        ...fffff2222fffff...
+        ...fffff2222fffff...
+        ...fffff2222fffff...
+        ...ffffffffffffff...
+        ...f111f11111111f...
+        ...f1f1f1f1f1f1ff...
+        ...f111f1f1f1f11f...
+        ...ff11f1f1f1ff1f...
+        ...ff11f1f1f1ff1f...
+        ...f1111111f1f11f...
+        ...ffffffffffffff...
+        ...ffffffffffffff...
+        ....................
         `, SpriteKind.Food)
-    tiles.placeOnRandomTile(Burger, sprites.castle.tileGrass1)
+    tiles.placeOnRandomTile(Dåse, sprites.castle.tileGrass1)
+}
+for (let index = 0; index < maxScore1; index++) {
+    Glas = sprites.create(img`
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ......99999999......
+        .....9999999999.....
+        ......99999999......
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        ....................
+        `, SpriteKind.Glas)
+    tiles.placeOnRandomTile(Glas, sprites.castle.tileGrass3)
+}
+for (let index = 0; index < 4; index++) {
+    dEnemy = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . 2 2 2 . . . . . . . 
+        . . . . . . 2 2 2 . . . . . . . 
+        . . . . . . 2 2 2 . . . . . . . 
+        . . . . . . . 2 . . . . . . . . 
+        . . . . . 2 . 2 . 2 . . . . . . 
+        . . . . . 2 2 2 2 2 . . . . . . 
+        . . . . . . . 2 . . . . . . . . 
+        . . . . . . . 2 . . . . . . . . 
+        . . . . . . . 2 . . . . . . . . 
+        . . . . . . 2 2 2 . . . . . . . 
+        . . . . . . 2 . 2 . . . . . . . 
+        . . . . . 2 2 . 2 2 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    dEnemy.follow(mySprite, 50)
+}
+for (let index = 0; index < 4; index++) {
+    eEnemy = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . 3 3 3 3 3 3 3 . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . 3 . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    eEnemy.follow(mySprite, 50)
 }
